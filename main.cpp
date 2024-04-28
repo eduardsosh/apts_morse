@@ -1,25 +1,65 @@
 #include<iostream>
 #include<fstream>
-#include<unordered_map>
-#include<string>
+
 
 using namespace std;
 
 const int BUFFER_LENGHT = 7;
 
-void populate_map(unordered_map<string, char> &umap) {
-    string morseLetters[] = {".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--..","-----",".----","..---","...--","....-",".....","-....","--...","---..","----.",".-.-.-","--..--","---...","..--..","-....-","-..-.",".----."};
+// Endoce morse charecters by lenght and in 0/1 '.'=0  '-'=1
+class morsemap{
+    char charmap1[2] = {'E','T'};
+    char charmap2[4] = {'I','A','N','M'};
+    char charmap3[8] = {'S','U','R','W','D','K','G','O'};
+    char charmap4[16] = {'H','V','F',0,'L',0,'P','J','B','X','C','Y','Z'};
+    char charmap5[32];
+    char charmap6[64];
+    
+    morsemap(){
+        charmap5[31] = '0';
+        charmap5[15] = '1';
+        charmap5[7] = '2';
+        charmap5[3] = '3';
+        charmap5[1] = '4';
+        charmap5[0] = '5';
+        charmap5[16] = '6';
+        charmap5[24] = '7';
+        charmap5[28] = '8';
+        charmap5[30] = '9';
 
-    char alphabet[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0','1','2','3','4','5','6','7','8','9','.',',',':','?','-','/',' '};
+        charmap6[21] = '.';
+        charmap6[51] = ',';
+        charmap6[56] = ':';
+        charmap6[12] = '?';
+        charmap6[33] = '-';
+        charmap6[18] = '/';
+        charmap6[30] = '.';
 
-    for (int i = 0; i < 43; ++i) {
-        umap[morseLetters[i]] = alphabet[i];
     }
-}
+
+    char get_char(int encoded,int lenght){
+        switch (lenght)
+        {
+        case 1:
+            return charmap1[encoded];
+        case 2:
+            return charmap2[encoded];
+        case 3: 
+            return charmap3[encoded];
+        case 4:
+            return charmap4[encoded];
+        case 5: 
+            return charmap5[encoded];
+        case 6:
+            return charmap6[encoded];
+        default:
+            return '!';
+        }
+    }
+};
 
 
-
-void solve(string infilename, string outfilename){
+void solve(char* infilename, char* outfilename){
     ifstream infile;
     ofstream outfile;
 
@@ -31,33 +71,32 @@ void solve(string infilename, string outfilename){
         return;
     }
 
-    unordered_map<string,char> morse_map;
-    populate_map(morse_map);
-    string code;
-
-    string buffer;
     char c;
-    int i = 0;
+    int buffsize = 0;
+    int buffer = 0;
+
+    // MAIN LOOP
+    // if not 
 
     while (infile.get(c)){
-        buffer.push_back(c);
-        if(buffer.back() == '|'){
-            if(buffer.front() == '|'){
-                buffer.clear();
-                continue;
-            }
-            buffer.pop_back();
-
-            auto it = morse_map.find(buffer);
-            if(it == morse_map.end()){
-                outfile<<"!";
-            }else{
-                outfile<< morse_map[buffer];
-            }
-            buffer.clear();
+        if(c == '|' && buffsize == 0){
+            continue;
         }
 
+        //Check if it exceeds max size and fix...
+
+        // Shift position left therefore new bit is just 0
+        if(c == '.'){
+            buffer = buffer << 1;
+        }
+        // Shift left and make first bit 1 
+        if(c == '-'){
+            buffer = buffer << 1;
+            buffer |= 1;
+        }
     }
+
+
     outfile<<endl;
     outfile.close();
     infile.close();   
