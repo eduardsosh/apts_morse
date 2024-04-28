@@ -106,20 +106,22 @@ void solve(char* infilename, char* outfilename){
             continue;
         }
         if(c == '|' && buffsize < 7){
-            cout<<buffer<<endl;
-            cout<< buffsize <<endl;
             outc = map.get_char(buffer, buffsize);
-            printCharInBinary(outc);
+
             if(outc == '\0'){
                 outfile<<'!';
             }else{
                 outfile<<outc;
-                printNumberInBinary(buffer);
             }
 
             buffsize = 0;
             buffer = 0;
             continue;
+        }
+        if(c == '|' && buffsize > 6){
+            outfile<<'!';
+            buffer = 0;
+            buffsize = 0;
         }
 
 
@@ -141,6 +143,10 @@ void solve(char* infilename, char* outfilename){
             continue;
         }
         
+    }
+
+    if(buffer){
+        outfile<<'!';
     }
 
 
