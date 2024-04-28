@@ -57,7 +57,10 @@ void solve(string infilename, string outfilename){
             buffer.clear();
         }
 
-    }   
+    }
+    outfile<<endl;
+    outfile.close();
+    infile.close();   
     
 
     
@@ -66,6 +69,17 @@ void solve(string infilename, string outfilename){
 
 int main(){
     solve("test_files/morse.i1","outputs/morse.o1");
+    solve("test_files/morse.i2","outputs/morse.o2");
+    solve("test_files/morse.i3","outputs/morse.o3");
+    solve("test_files/morse.i4","outputs/morse.o4");
+    solve("test_files/morse.i5","outputs/morse.o5");
+    solve("test_files/morse.i6","outputs/morse.o6");
+    solve("test_files/morse.i7","outputs/morse.o7");
+    solve("test_files/morse.i8","outputs/morse.o8");
+    solve("test_files/morse.i9","outputs/morse.o9");
+    solve("test_files/morse.i10","outputs/morse.o10");
+    solve("test_files/morse.i11","outputs/morse.o11");
+
     cout<< endl;
     cout<< endl;
 
