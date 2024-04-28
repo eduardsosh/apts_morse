@@ -7,15 +7,16 @@ using namespace std;
 const int BUFFER_LENGHT = 7;
 
 // Endoce morse charecters by lenght and in 0/1 '.'=0  '-'=1
-class morsemap{
+class Morsemap{
     char charmap1[2] = {'E','T'};
     char charmap2[4] = {'I','A','N','M'};
     char charmap3[8] = {'S','U','R','W','D','K','G','O'};
-    char charmap4[16] = {'H','V','F',0,'L',0,'P','J','B','X','C','Y','Z'};
-    char charmap5[32];
-    char charmap6[64];
+    char charmap4[16] = {'H','V','F',0,'L',0,'P','J','B','X','C','Y','Z',0,0,0};
+    char charmap5[32] = {};
+    char charmap6[64] = {};
     
-    morsemap(){
+    public:
+    Morsemap(){
         charmap5[31] = '0';
         charmap5[15] = '1';
         charmap5[7] = '2';
@@ -33,7 +34,8 @@ class morsemap{
         charmap6[12] = '?';
         charmap6[33] = '-';
         charmap6[18] = '/';
-        charmap6[30] = '.';
+        charmap6[30] = ' ';
+        //charmap6[63] = 0;
 
     }
 
@@ -53,10 +55,28 @@ class morsemap{
         case 6:
             return charmap6[encoded];
         default:
-            return '!';
+            return 0;
         }
     }
 };
+
+void printCharInBinary(char c) {
+    // Iterate through each bit of the char
+    for (int i = 7; i >= 0; --i) {
+        // Use bitwise AND with 1 to check the value of the current bit
+        std::cout << ((c >> i) & 1);
+    }
+    std::cout << std::endl;
+}
+
+void printNumberInBinary(int num) {
+    // Iterate through each bit of the number
+    for (int i = sizeof(num) * 8 - 1; i >= 0; --i) {
+        // Use bitwise AND with 1 to check the value of the current bit
+        std::cout << ((num >> i) & 1);
+    }
+    std::cout << std::endl;
+}
 
 
 void solve(char* infilename, char* outfilename){
@@ -71,7 +91,9 @@ void solve(char* infilename, char* outfilename){
         return;
     }
 
+    Morsemap map;
     char c;
+    char outc = 0;
     int buffsize = 0;
     int buffer = 0;
 
@@ -79,21 +101,46 @@ void solve(char* infilename, char* outfilename){
     // if not 
 
     while (infile.get(c)){
+
         if(c == '|' && buffsize == 0){
             continue;
         }
+        if(c == '|' && buffsize < 7){
+            cout<<buffer<<endl;
+            cout<< buffsize <<endl;
+            outc = map.get_char(buffer, buffsize);
+            printCharInBinary(outc);
+            if(outc == '\0'){
+                outfile<<'!';
+            }else{
+                outfile<<outc;
+                printNumberInBinary(buffer);
+            }
+
+            buffsize = 0;
+            buffer = 0;
+            continue;
+        }
+
+
+        
 
         //Check if it exceeds max size and fix...
 
         // Shift position left therefore new bit is just 0
         if(c == '.'){
             buffer = buffer << 1;
+            buffsize++;
+            continue;
         }
         // Shift left and make first bit 1 
         if(c == '-'){
             buffer = buffer << 1;
             buffer |= 1;
+            buffsize++;
+            continue;
         }
+        
     }
 
 
